@@ -17,7 +17,6 @@ public abstract class NameTable implements AutoCloseable {
 	private PreparedStatement select;
 	
 	public NameTable(Connection connection, String tableName) throws SQLException {
-		//tableName = tableName.toUpperCase();
 		String selectQuery = String.format("SELECT Id FROM %s WHERE Name = ?", tableName);
 		String insertQuery = String.format("INSERT INTO %s (Name) VALUES (?)", tableName);
 		

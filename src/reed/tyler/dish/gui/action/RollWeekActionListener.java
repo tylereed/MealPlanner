@@ -1,4 +1,4 @@
-package reed.tyler.dish.gui;
+package reed.tyler.dish.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
+import reed.tyler.dish.DishInfo;
 import reed.tyler.dish.SetDish;
 import reed.tyler.dish.Type;
 import reed.tyler.dish.db.Dish;
@@ -41,7 +42,7 @@ public class RollWeekActionListener implements ActionListener {
 		}
 	}
 
-	private reed.tyler.dish.Dish getRandom(Dish selector, Type type) throws SQLException {
+	private DishInfo getRandom(Dish selector, Type type) throws SQLException {
 		List<Integer> dishIds = selector.getIds(type);
 		int index = random.nextInt(dishIds.size());
 		int selectedId = dishIds.get(index);

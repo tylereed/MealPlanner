@@ -13,6 +13,22 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import reed.tyler.dish.SetDish;
+import reed.tyler.dish.gui.action.ImportCsv;
+import reed.tyler.dish.gui.action.RollWeekActionListener;
+
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import java.awt.Dimension;
+import java.awt.Font;
+
+import com.jgoodies.forms.layout.FormSpecs;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class DishFrame extends JFrame {
 
@@ -25,33 +41,44 @@ public class DishFrame extends JFrame {
 	private List<SetDish> setters;
 
 	public DishFrame() {
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		setters = new ArrayList<>();
 		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+		
+		JMenuItem mntmImport = new JMenuItem("Import");
+		mntmImport.addActionListener(new ImportCsv());
+		mnFile.add(mntmImport);
+
 		JPanel scroller = new JPanel();
-		scroller.setLayout(new BorderLayout());
 
 		JScrollPane scrollPane = new JScrollPane(scroller);
 		setContentPane(scrollPane);
 
 		JButton roller = new JButton("Roll Week");
 		roller.addActionListener(new RollWeekActionListener(setters));
-		scroller.add(roller, BorderLayout.NORTH);
+		scroller.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, },
+				new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+		scroller.add(roller, "1, 1, left, top");
 
 		JPanel week = new JPanel();
 
-		scroller.add(week, BorderLayout.CENTER);
+		scroller.add(week, "1, 2, left, top");
 		GridBagLayout gbl_week = new GridBagLayout();
-		gbl_week.columnWidths = new int[] { 200, 200, 200, 200, 200, 200, 200};
-		gbl_week.rowHeights = new int[] { 120, };
-		gbl_week.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-		gbl_week.rowWeights = new double[] { 0.0 };
+		gbl_week.columnWidths = new int[] { 200 };
+		gbl_week.rowHeights = new int[] { 160 };
+		gbl_week.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0 };
+		gbl_week.rowWeights = new double[] { 0.0, 0.0 };
 		week.setLayout(gbl_week);
 
 		DayPanel pnlSunday = new DayPanel("Sunday");
 		GridBagConstraints gbc_pnlSunday = new GridBagConstraints();
-		gbc_pnlSunday.insets = new Insets(0, 0, 0, 5);
+		gbc_pnlSunday.insets = new Insets(5, 5, 5, 5);
 		gbc_pnlSunday.gridx = 0;
 		gbc_pnlSunday.gridy = 0;
 		week.add(pnlSunday, gbc_pnlSunday);
@@ -59,7 +86,7 @@ public class DishFrame extends JFrame {
 
 		DayPanel pnlMonday = new DayPanel("Monday");
 		GridBagConstraints gbc_pnlMonday = new GridBagConstraints();
-		gbc_pnlMonday.insets = new Insets(0, 0, 0, 5);
+		gbc_pnlMonday.insets = new Insets(5, 5, 5, 5);
 		gbc_pnlMonday.gridx = 1;
 		gbc_pnlMonday.gridy = 0;
 		week.add(pnlMonday, gbc_pnlMonday);
@@ -67,7 +94,7 @@ public class DishFrame extends JFrame {
 
 		DayPanel pnlTuesday = new DayPanel("Tuesday");
 		GridBagConstraints gbc_pnlTuesday = new GridBagConstraints();
-		gbc_pnlTuesday.insets = new Insets(0, 0, 0, 5);
+		gbc_pnlTuesday.insets = new Insets(5, 5, 5, 5);
 		gbc_pnlTuesday.gridx = 2;
 		gbc_pnlTuesday.gridy = 0;
 		week.add(pnlTuesday, gbc_pnlTuesday);
@@ -75,7 +102,7 @@ public class DishFrame extends JFrame {
 
 		DayPanel pnlWednesday = new DayPanel("Wednesday");
 		GridBagConstraints gbc_pnlWednesday = new GridBagConstraints();
-		gbc_pnlWednesday.insets = new Insets(0, 0, 0, 5);
+		gbc_pnlWednesday.insets = new Insets(5, 5, 5, 5);
 		gbc_pnlWednesday.gridx = 3;
 		gbc_pnlWednesday.gridy = 0;
 		week.add(pnlWednesday, gbc_pnlWednesday);
@@ -83,24 +110,25 @@ public class DishFrame extends JFrame {
 
 		DayPanel pnlThursday = new DayPanel("Thursday");
 		GridBagConstraints gbc_pnlThursday = new GridBagConstraints();
-		gbc_pnlThursday.insets = new Insets(0, 0, 0, 5);
-		gbc_pnlThursday.gridx = 4;
-		gbc_pnlThursday.gridy = 0;
+		gbc_pnlThursday.insets = new Insets(5, 5, 5, 5);
+		gbc_pnlThursday.gridx = 0;
+		gbc_pnlThursday.gridy = 1;
 		week.add(pnlThursday, gbc_pnlThursday);
 		setters.add(pnlThursday);
 
 		DayPanel pnlFriday = new DayPanel("Friday");
 		GridBagConstraints gbc_pnlFriday = new GridBagConstraints();
-		gbc_pnlFriday.insets = new Insets(0, 0, 0, 5);
-		gbc_pnlFriday.gridx = 5;
-		gbc_pnlFriday.gridy = 0;
+		gbc_pnlFriday.insets = new Insets(5, 5, 5, 5);
+		gbc_pnlFriday.gridx = 1;
+		gbc_pnlFriday.gridy = 1;
 		week.add(pnlFriday, gbc_pnlFriday);
 		setters.add(pnlFriday);
 
 		DayPanel pnlSaturday = new DayPanel("Saturday");
 		GridBagConstraints gbc_pnlSaturday = new GridBagConstraints();
-		gbc_pnlSaturday.gridx = 6;
-		gbc_pnlSaturday.gridy = 0;
+		gbc_pnlSaturday.insets = new Insets(5, 5, 5, 5);
+		gbc_pnlSaturday.gridx = 2;
+		gbc_pnlSaturday.gridy = 1;
 		week.add(pnlSaturday, gbc_pnlSaturday);
 		setters.add(pnlSaturday);
 

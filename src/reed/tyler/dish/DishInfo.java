@@ -2,7 +2,7 @@ package reed.tyler.dish;
 
 import com.google.common.collect.ImmutableList;
 
-public class Dish {
+public class DishInfo {
 
 	private int id;
 
@@ -26,7 +26,7 @@ public class Dish {
 
 	private String page;
 
-	public Dish(int id, Type type, String name, int price, int speed, int difficulty, String description,
+	public DishInfo(int id, Type type, String name, int price, int speed, int difficulty, String description,
 			String ingredient, Iterable<String> methods, String recipe, String page) {
 		this.id = id;
 		this.type = type;
@@ -41,7 +41,7 @@ public class Dish {
 		this.page = page;
 	}
 
-	public Dish(int id, Type type, String name, int price, int speed, int difficulty, String description,
+	public DishInfo(int id, Type type, String name, int price, int speed, int difficulty, String description,
 			String ingredient, String recipe, String page, String... methods) {
 		this.id = id;
 		this.type = type;
@@ -56,7 +56,7 @@ public class Dish {
 		this.page = page;
 	}
 
-	public Dish(String name) {
+	public DishInfo(String name) {
 		this(0, Type.Main, name, 0, 0, 0, "", "", "", "");
 	}
 
@@ -102,6 +102,33 @@ public class Dish {
 
 	public Type getType() {
 		return type;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		result.append(getName());
+		result.append(" ");
+		
+		for (int i = 0; i < getPrice(); ++i) {
+			result.append("$");
+		}
+		
+		result.append(" ");
+		for (int i = 0; i < getSpeed(); ++i) {
+			result.append("\u231B");
+		}
+		
+		switch (getDifficulty()) {
+		case 1:
+			result.append("\u263A");
+			break;
+		case 3:
+			result.append("\u2639");
+			break;
+		}
+		
+		return result.toString();
 	}
 
 }

@@ -9,8 +9,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import reed.tyler.dish.Dish;
+import reed.tyler.dish.DishInfo;
 import reed.tyler.dish.SetDish;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import java.awt.Font;
 
 public class DayPanel extends JPanel implements SetDish {
 
@@ -24,55 +29,45 @@ public class DayPanel extends JPanel implements SetDish {
 	 * @param label The day of the week this panel is for
 	 */
 	public DayPanel(String label) {
-		GridBagLayout layout = new GridBagLayout();
-		layout.columnWidths = new int[] {200};
-		layout.rowHeights = new int[] {30};
-		layout.columnWeights = new double[] { 0.0 };
-		layout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0 };
-		setLayout(layout);
+		setPreferredSize(new Dimension(200, 160));
+		setMinimumSize(new Dimension(200, 160));
+		
+		setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("200px"),},
+			new RowSpec[] {
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.LINE_GAP_ROWSPEC,
+				RowSpec.decode("40px"),
+				FormSpecs.LINE_GAP_ROWSPEC,
+				RowSpec.decode("40px"),
+				FormSpecs.LINE_GAP_ROWSPEC,
+				RowSpec.decode("40px"),}));
 
 		JLabel lblWeekDay = new JLabel(label);
-		GridBagConstraints gbc_lblWeekDay = new GridBagConstraints();
-		gbc_lblWeekDay.fill = GridBagConstraints.BOTH;
-		gbc_lblWeekDay.insets = new Insets(0, 0, 5, 0);
-		gbc_lblWeekDay.gridx = 0;
-		gbc_lblWeekDay.gridy = 0;
-		add(lblWeekDay, gbc_lblWeekDay);
+		add(lblWeekDay, "1, 2, fill, fill");
 
 		txtMain = new JTextArea();
+		txtMain.setFont(new Font("Arial Unicode MS", Font.PLAIN, 15));
+		txtMain.setRows(2);
 		txtMain.setEditable(false);
 		txtMain.setWrapStyleWord(true);
 		txtMain.setLineWrap(true);
-		txtMain.setMinimumSize(new Dimension(250, 20));
-		GridBagConstraints gbc_txtMain = new GridBagConstraints();
-		gbc_txtMain.fill = GridBagConstraints.BOTH;
-		gbc_txtMain.insets = new Insets(0, 0, 5, 0);
-		gbc_txtMain.gridx = 0;
-		gbc_txtMain.gridy = 1;
-		add(txtMain, gbc_txtMain);
-		txtMain.setMinimumSize(new Dimension(200, 20));
-		txtMain.setMinimumSize(new Dimension(200, 20));
+		add(txtMain, "1, 4, fill, fill");
 
 		txtVegetable = new JTextArea();
+		txtVegetable.setFont(new Font("Arial Unicode MS", Font.PLAIN, 15));
 		txtVegetable.setEditable(false);
 		txtVegetable.setWrapStyleWord(true);
 		txtVegetable.setLineWrap(true);
-		GridBagConstraints gbc_txtVegetable = new GridBagConstraints();
-		gbc_txtVegetable.fill = GridBagConstraints.BOTH;
-		gbc_txtVegetable.insets = new Insets(0, 0, 5, 0);
-		gbc_txtVegetable.gridx = 0;
-		gbc_txtVegetable.gridy = 2;
-		add(txtVegetable, gbc_txtVegetable);
+		add(txtVegetable, "1, 6, fill, fill");
 
 		txtSide = new JTextArea();
+		txtSide.setFont(new Font("Arial Unicode MS", Font.PLAIN, 15));
 		txtSide.setEditable(false);
 		txtSide.setWrapStyleWord(true);
 		txtSide.setLineWrap(true);
-		GridBagConstraints gbc_txtSide = new GridBagConstraints();
-		gbc_txtSide.fill = GridBagConstraints.BOTH;
-		gbc_txtSide.gridx = 0;
-		gbc_txtSide.gridy = 3;
-		add(txtSide, gbc_txtSide);
+		add(txtSide, "1, 8, fill, fill");
 
 	}
 
@@ -81,8 +76,8 @@ public class DayPanel extends JPanel implements SetDish {
 	 * @param main The dish to display
 	 */
 	@Override
-	public void setMain(Dish main) {
-		txtMain.setText(main.getName());
+	public void setMain(DishInfo main) {
+		txtMain.setText(main.toString());
 	}
 
 
@@ -91,8 +86,8 @@ public class DayPanel extends JPanel implements SetDish {
 	 * @param veggie The dish to display
 	 */
 	@Override
-	public void setVegetable(Dish veggie) {
-		txtVegetable.setText(veggie.getName());
+	public void setVegetable(DishInfo veggie) {
+		txtVegetable.setText(veggie.toString());
 	}
 
 	/**
@@ -100,8 +95,8 @@ public class DayPanel extends JPanel implements SetDish {
 	 * @param side The dish to display
 	 */
 	@Override
-	public void setSide(Dish side) {
-		txtSide.setText(side.getName());
+	public void setSide(DishInfo side) {
+		txtSide.setText(side.toString());
 	}
 
 }

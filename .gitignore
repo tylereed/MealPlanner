@@ -56,3 +56,5 @@ meals.csv
 sides.csv
 src_old/*
 vegetables.csv
+/bin/
+/target/

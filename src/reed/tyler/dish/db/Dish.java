@@ -2,6 +2,7 @@ package reed.tyler.dish.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -9,8 +10,10 @@ import java.util.List;
 
 import com.google.common.collect.Iterators;
 
+import reed.tyler.dish.DishInfo;
 import reed.tyler.dish.Type;
 import reed.tyler.dish.db.iterators.ResultSetIterator;
+import reed.tyler.dish.db.iterators.ResultSetIterator.Function;
 
 public class Dish implements AutoCloseable {
 
@@ -27,7 +30,10 @@ public class Dish implements AutoCloseable {
 
 		this.getIds = connection.prepareStatement("SELECT Id FROM Dish WHERE TypeId = ?");
 
-		this.select = connection.prepareStatement("SELECT * FROM Dish WHERE Id = ?");
+		this.select = connection
+				.prepareStatement("SELECT Dish.*, Ingredient.Name as Ingredient, Description.Name as Description "
+						+ "FROM Dish " + "	INNER JOIN Ingredient on IngredientId = Ingredient.Id "
+						+ "	INNER JOIN Description on DescriptionId = Description.Id " + "WHERE Id = ?");
 	}
 
 	public int insert(int typeId, int ingredientId, int descriptionId, String name, int price, int speed,
@@ -67,15 +73,28 @@ public class Dish implements AutoCloseable {
 		}
 	}
 
-	public reed.tyler.dish.Dish select(int selectedId) throws SQLException {
+	public DishInfo select(int selectedId) throws SQLException {
 		select.clearParameters();
 
 		select.setInt(1, selectedId);
 
-		try (ResultSetIterator<reed.tyler.dish.Dish> results = new ResultSetIterator<reed.tyler.dish.Dish>(select.executeQuery(),
-				set -> new reed.tyler.dish.Dish(set.getString("Name")))) {
+		try (ResultSetIterator<DishInfo> results = new ResultSetIterator<DishInfo>(select.executeQuery(),
+				new DishToDishInfo())) {
 			return Iterators.getOnlyElement(results);
 		}
+	}
+
+	private class DishToDishInfo implements Function<ResultSet, DishInfo> {
+
+		@Override
+		public DishInfo apply(ResultSet set) throws SQLException {
+			Type type = Type.getById(set.getInt("TypeId"));
+
+			return new DishInfo(set.getInt("Id"), type, set.getString("Name"), set.getInt("Price"), set.getInt("Speed"),
+					set.getInt("Difficulty"), set.getString("Description"), set.getString("Ingredient"),
+					new ArrayList<String>(), "", "");
+		}
+
 	}
 
 }
