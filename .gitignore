@@ -41,6 +41,7 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
 .settings/*
 bin/*
 target/*
@@ -50,11 +51,9 @@ target/*
 .project
 db/mealplanner.lck
 db/mealplanner.log
-db_old/*
 deploy/*
 meals.csv
 sides.csv
-src_old/*
 vegetables.csv
 /bin/
 /target/
