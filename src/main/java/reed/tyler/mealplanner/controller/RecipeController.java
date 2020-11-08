@@ -28,12 +28,13 @@ public class RecipeController {
 
 	@GetMapping
 	public List<Recipe> read() {
-		return List.of();
+		return repository.findAll();
 	}
 
 	@GetMapping("{id}")
-	public ResponseEntity<Recipe> read(int id) {
-		return null;
+	public ResponseEntity<Recipe> read(@PathVariable int id) {
+		var recipe = repository.findById(id);
+		return ResponseEntity.of(recipe);
 	}
 
 	@PostMapping
