@@ -8,28 +8,21 @@ import static org.springframework.test.web.servlet.ResultMatcher.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import reed.tyler.mealplanner.db.Recipe;
+import reed.tyler.mealplanner.repository.RecipeRepository;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
-@DataJpaTest
 @AutoConfigureMockMvc
-//@WebMvcTest
 class RecipeControllerTest {
 
 	@Autowired
-	private TestEntityManager entityManager;
+	private RecipeRepository repository;
 
 	@Autowired
 	private MockMvc mvc;
@@ -38,15 +31,15 @@ class RecipeControllerTest {
 	void setUp() throws Exception {
 		Recipe recipe1 = new Recipe(1, "test name1", "test directions1", "test location1", 1, 2, 3);
 		Recipe recipe2 = new Recipe(2, "test name2", "test directions2", "test location2", 2, 3, 1);
-		entityManager.persist(recipe1);
-		entityManager.persist(recipe2);
-		entityManager.flush();
+		repository.save(recipe1);
+		repository.save(recipe2);
+		repository.flush();
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
-		entityManager.clear();
-		entityManager.flush();
+		repository.deleteAll();
+		repository.flush();
 	}
 
 	private ResultMatcher matchRecipe(int index, int id, String name, String directions, String location, int price,
@@ -76,8 +69,9 @@ class RecipeControllerTest {
 
 	@Test
 	void testReadInt() throws Exception {
-		mvc.perform(get("/api/recipes/1")).andExpect(status().isOk())
-				.andExpect(matchRecipe(1, 1, "test name1", "test directions1", "test location1", 1, 2, 3));
+		mvc.perform(get("/api/recipes/1"))
+			.andExpect(status().isOk())
+			.andExpect(matchRecipe(1, 1, "test name1", "test directions1", "test location1", 1, 2, 3));
 	}
 
 	@Test
