@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
@@ -22,7 +22,6 @@ import reed.tyler.mealplanner.repository.RecipeRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class RecipeControllerTest {
 
 	@Autowired
@@ -41,9 +40,8 @@ class RecipeControllerTest {
 	}
 
 	@AfterEach
-	void tearDown() throws Exception {
-		repository.deleteAll();
-		repository.flush();
+	void tearDown(@Autowired JdbcTemplate jdbcTemplate) throws Exception {
+		jdbcTemplate.execute("TRUNCATE TABLE recipe RESTART IDENTITY");
 	}
 
 	private ResultMatcher matchRecipeArray(int index, int id, String name, String directions, String location, int price,
@@ -56,7 +54,7 @@ class RecipeControllerTest {
 				jsonPath("$[%d].price", index).value(price),
 				jsonPath("$[%d].speed", index).value(speed),
 				jsonPath("$[%d].difficulty", index).value(difficulty),
-				jsonPath("$.[%d].length())", index).value(7));
+				jsonPath("$[%d].length())", index).value(7));
 	}
 
 	private ResultMatcher matchRecipe(int id, String name, String directions, String location, int price, int speed,
