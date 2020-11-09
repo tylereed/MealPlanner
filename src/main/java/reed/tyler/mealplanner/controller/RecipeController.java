@@ -42,6 +42,11 @@ public class RecipeController {
 		return ResponseEntity.of(recipe);
 	}
 
+	@GetMapping("/random/{count}")
+	public List<Recipe> generate(@PathVariable int count) {
+		return List.of();
+	}
+
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody @Validated Recipe recipe) {
 		recipe = repository.save(recipe);
