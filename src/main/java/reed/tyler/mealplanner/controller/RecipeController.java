@@ -1,8 +1,10 @@
 package reed.tyler.mealplanner.controller;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +39,26 @@ public class RecipeController {
 	}
 
 	@GetMapping("{id}")
-	public ResponseEntity<Recipe> read(@PathVariable int id) {
+	public ResponseEntity<Recipe> read(@PathVariable long id) {
 		var recipe = repository.findById(id);
 		return ResponseEntity.of(recipe);
 	}
 
 	@GetMapping("/random/{count}")
-	public List<Recipe> generate(@PathVariable int count) {
-		return List.of();
+	public List<Recipe> generate(@PathVariable long count) {
+		ThreadLocalRandom random = ThreadLocalRandom.current();
+
+		long max = repository.count();
+
+		HashSet<Long> uniqueIds = new HashSet<>();
+		while (uniqueIds.size() < count) {
+			long nextId = random.nextLong(1, max + 1);
+			if (repository.existsById(nextId)) {
+				uniqueIds.add(nextId);
+			}
+		}
+
+		return repository.findAllById(uniqueIds);
 	}
 
 	@PostMapping
@@ -59,7 +73,7 @@ public class RecipeController {
 	}
 
 	@PutMapping("{id}")
-	public ResponseEntity<?> update(@PathVariable int id, @RequestBody Recipe updatedRecipe) {
+	public ResponseEntity<?> update(@PathVariable long id, @RequestBody Recipe updatedRecipe) {
 		var recipe = repository.findById(id)
 			.map(dbRecipe -> {
 				BeanUtils.copyProperties(updatedRecipe, dbRecipe, "id");
