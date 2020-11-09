@@ -22,7 +22,7 @@ public class Recipe {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Column(length = 50, nullable = false)
 	@NonNull

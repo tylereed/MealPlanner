@@ -57,7 +57,7 @@ class RecipeControllerTest {
 				jsonPath("$[%d].length())", index).value(7));
 	}
 
-	private ResultMatcher matchRecipe(int id, String name, String directions, String location, int price, int speed,
+	private ResultMatcher matchRecipe(long id, String name, String directions, String location, int price, int speed,
 			int difficulty) {
 
 		return matchAll(jsonPath("$.id").value(id),
