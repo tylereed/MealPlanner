@@ -33,8 +33,8 @@ class IngredientControllerTest {
 
 	@BeforeEach
 	void setup() {
-		Ingredient ingredient1 = new Ingredient(1, "test name1", false);
-		Ingredient ingredient2 = new Ingredient(2, "test name2", true);
+		Ingredient ingredient1 = new Ingredient(1L, "test name1", false);
+		Ingredient ingredient2 = new Ingredient(2L, "test name2", true);
 		ingredient1 = repository.save(ingredient1);
 		ingredient2 = repository.save(ingredient2);
 		repository.flush();
@@ -87,7 +87,7 @@ class IngredientControllerTest {
 
 	@Test
 	void testCreate() throws Exception {
-		Ingredient ingredient = new Ingredient(0, "new ingredient", false);
+		Ingredient ingredient = new Ingredient(0L, "new ingredient", false);
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		String ingredientString = objectMapper.writeValueAsString(ingredient);
@@ -96,7 +96,7 @@ class IngredientControllerTest {
 			.andExpect(status().isCreated())
 			.andExpect(header().string("Location", endsWith("/api/ingredients/3")));
 
-		ingredient.setId(3);
+		ingredient.setId(3L);
 		mvc.perform(get("/api/ingredients/3"))
 			.andExpect(status().isOk())
 			.andExpect(matchIngredient(ingredient));
@@ -104,7 +104,7 @@ class IngredientControllerTest {
 
 	@Test
 	void testUpdate() throws Exception {
-		Ingredient ingredient = new Ingredient(0, "new ingredient", false);
+		Ingredient ingredient = new Ingredient(0L, "new ingredient", false);
 
 		ObjectMapper mapper = new ObjectMapper();
 		String ingredientString = mapper.writeValueAsString(ingredient);
@@ -112,7 +112,7 @@ class IngredientControllerTest {
 		mvc.perform(put("/api/ingredients/1").contentType("application/json").content(ingredientString))
 				.andExpect(status().isNoContent());
 
-		ingredient.setId(1);
+		ingredient.setId(1L);
 		mvc.perform(get("/api/ingredients/1"))
 			.andExpect(status().isOk())
 			.andExpect(matchIngredient(ingredient));

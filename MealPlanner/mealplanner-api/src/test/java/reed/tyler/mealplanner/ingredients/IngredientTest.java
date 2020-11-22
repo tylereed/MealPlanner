@@ -9,12 +9,12 @@ public class IngredientTest {
 
 	@Test
 	void testConstructor() {
-		assertDoesNotThrow(() -> new Ingredient(0, "test name", true));
+		assertDoesNotThrow(() -> new Ingredient(0L, "test name", true));
 	}
 
 	@Test
 	void testConstructor_NullName() {
-		assertThrows(NullPointerException.class, () -> new Ingredient(0, null, true));
+		assertThrows(NullPointerException.class, () -> new Ingredient(0L, null, true));
 	}
 
 }
