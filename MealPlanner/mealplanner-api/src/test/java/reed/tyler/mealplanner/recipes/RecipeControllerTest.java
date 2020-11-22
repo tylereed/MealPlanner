@@ -1,9 +1,13 @@
-package reed.tyler.mealplanner.controller;
+package reed.tyler.mealplanner.recipes;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.ResultMatcher.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.endsWith;
+import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,9 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import reed.tyler.mealplanner.db.Recipe;
-import reed.tyler.mealplanner.repository.RecipeRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc

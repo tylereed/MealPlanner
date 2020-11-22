@@ -1,7 +1,7 @@
-package reed.tyler.mealplanner.controller;
+package reed.tyler.mealplanner.recipes;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,9 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.jayway.jsonpath.JsonPath;
-
-import reed.tyler.mealplanner.db.Recipe;
-import reed.tyler.mealplanner.repository.RecipeRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
