@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface Identifiable<T> {
 
-	T getId();
+	@JsonIgnore
+	T getEntityId();
 
 	@JsonIgnore
 	default String getIdName() {

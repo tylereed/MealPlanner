@@ -33,8 +33,8 @@ class IngredientControllerTest {
 
 	@BeforeEach
 	void setup() {
-		Ingredient ingredient1 = new Ingredient(1L, "test name1", false);
-		Ingredient ingredient2 = new Ingredient(2L, "test name2", true);
+		Ingredient ingredient1 = new Ingredient(1, "test name1", false);
+		Ingredient ingredient2 = new Ingredient(2, "test name2", true);
 		ingredient1 = repository.save(ingredient1);
 		ingredient2 = repository.save(ingredient2);
 		repository.flush();
@@ -55,7 +55,7 @@ class IngredientControllerTest {
 	}
 
 	private ResultMatcher matchIngredient(Ingredient expected) {
-		return matchIngredient(expected.getId(), expected.getName(), expected.isExotic());
+		return matchIngredient(expected.getEntityId(), expected.getName(), expected.isExotic());
 	}
 
 	@AfterEach
@@ -87,7 +87,7 @@ class IngredientControllerTest {
 
 	@Test
 	void testCreate() throws Exception {
-		Ingredient ingredient = new Ingredient(0L, "new ingredient", false);
+		Ingredient ingredient = new Ingredient(0, "new ingredient", false);
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		String ingredientString = objectMapper.writeValueAsString(ingredient);
@@ -104,7 +104,7 @@ class IngredientControllerTest {
 
 	@Test
 	void testUpdate() throws Exception {
-		Ingredient ingredient = new Ingredient(0L, "new ingredient", false);
+		Ingredient ingredient = new Ingredient(0, "new ingredient", false);
 
 		ObjectMapper mapper = new ObjectMapper();
 		String ingredientString = mapper.writeValueAsString(ingredient);

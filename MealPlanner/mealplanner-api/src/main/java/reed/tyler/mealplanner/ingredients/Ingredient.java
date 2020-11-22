@@ -21,7 +21,7 @@ public class Ingredient implements Identifiable<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private long id;
 
 	@Column(length = 50, nullable = false)
 	@NonNull
@@ -30,5 +30,10 @@ public class Ingredient implements Identifiable<Long> {
 	@Column(nullable = false)
 	@NonNull
 	private boolean exotic;
+
+	@Override
+	public Long getEntityId() {
+		return id;
+	}
 
 }

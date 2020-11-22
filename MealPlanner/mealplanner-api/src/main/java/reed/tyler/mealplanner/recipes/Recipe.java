@@ -13,12 +13,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import reed.tyler.mealplanner.utils.Identifiable;
 
 @Entity
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Recipe {
+public class Recipe implements Identifiable<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,5 +43,10 @@ public class Recipe {
 	private int speed;
 
 	private int difficulty;
+	
+	@Override
+	public Long getEntityId() {
+		return id;
+	}
 
 }

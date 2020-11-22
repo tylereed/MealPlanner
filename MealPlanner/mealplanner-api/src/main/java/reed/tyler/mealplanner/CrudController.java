@@ -1,6 +1,5 @@
 package reed.tyler.mealplanner;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -28,14 +27,14 @@ public class CrudController<TEntity extends Identifiable<TId>, TRepository exten
 
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody @Validated TEntity entity) {
-		entity = repository.save(entity);
+		entity = repository.saveAndFlush(entity);
 
 		// Using fromMethod always threw errors, probably because the read method takes
 		// in a generic parameter, so just hard code the path
 		URI location = MvcUriComponentsBuilder
 				.fromController(this.getClass())
 				.path("/{id}")
-				.build(entity.getId());
+				.build(entity.getEntityId());
 
 		return ResponseEntity.created(location).build();
 	}
@@ -56,9 +55,7 @@ public class CrudController<TEntity extends Identifiable<TId>, TRepository exten
 		var entity = repository.findById(id).map(dbEntity -> {
 			BeanUtils.copyProperties(updatedEntity, dbEntity, updatedEntity.getIdName());
 			return dbEntity;
-		});
-
-		entity.ifPresent(repository::save);
+		}).map(repository::saveAndFlush);
 
 		return ofNoContent(entity);
 	}

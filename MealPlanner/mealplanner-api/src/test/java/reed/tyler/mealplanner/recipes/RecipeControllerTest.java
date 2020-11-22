@@ -72,7 +72,7 @@ class RecipeControllerTest {
 	}
 	
 	private ResultMatcher matchRecipe(Recipe expected) {
-		return matchRecipe(expected.getId(), expected.getName(), expected.getDirections(), expected.getLocation(),
+		return matchRecipe(expected.getEntityId(), expected.getName(), expected.getDirections(), expected.getLocation(),
 				expected.getPrice(), expected.getSpeed(), expected.getDifficulty());
 	}
 
