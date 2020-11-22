@@ -32,7 +32,7 @@ class RecipeControllerTest {
 	private MockMvc mvc;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		Recipe recipe1 = new Recipe(1, "test name1", "test directions1", "test location1", 1, 2, 3);
 		Recipe recipe2 = new Recipe(2, "test name2", "test directions2", "test location2", 2, 3, 1);
 		recipe1 = repository.save(recipe1);
@@ -45,7 +45,7 @@ class RecipeControllerTest {
 		jdbcTemplate.execute("TRUNCATE TABLE recipe RESTART IDENTITY");
 	}
 
-	private ResultMatcher matchRecipeArray(int index, int id, String name, String directions, String location, int price,
+	private ResultMatcher matchRecipeArray(int index, long id, String name, String directions, String location, int price,
 			int speed, int difficulty) {
 
 		return matchAll(jsonPath("$[%d].id", index).value(id),
@@ -72,7 +72,7 @@ class RecipeControllerTest {
 	}
 	
 	private ResultMatcher matchRecipe(Recipe expected) {
-		return matchRecipe(expected.getId(), expected.getName(), expected.getDirections(), expected.getLocation(),
+		return matchRecipe(expected.getEntityId(), expected.getName(), expected.getDirections(), expected.getLocation(),
 				expected.getPrice(), expected.getSpeed(), expected.getDifficulty());
 	}
 
