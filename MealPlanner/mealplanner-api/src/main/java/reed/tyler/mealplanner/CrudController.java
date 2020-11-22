@@ -1,5 +1,6 @@
 package reed.tyler.mealplanner;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import reed.tyler.mealplanner.utils.Identifiable;
 
-public class CrudController<TEntity extends Identifiable<Long>, TRepository extends JpaRepository<TEntity, Long>> {
+public class CrudController<TEntity extends Identifiable<TId>, TRepository extends JpaRepository<TEntity, TId>, TId> {
 
 	protected final TRepository repository;
 
@@ -29,7 +30,11 @@ public class CrudController<TEntity extends Identifiable<Long>, TRepository exte
 	public ResponseEntity<?> create(@RequestBody @Validated TEntity entity) {
 		entity = repository.save(entity);
 
-		URI location = MvcUriComponentsBuilder.fromMethodName(this.getClass(), "read", entity.getId())
+		// Using fromMethod always threw errors, probably because the read method takes
+		// in a generic parameter, so just hard code the path
+		URI location = MvcUriComponentsBuilder
+				.fromController(this.getClass())
+				.path("/{id}")
 				.build(entity.getId());
 
 		return ResponseEntity.created(location).build();
@@ -41,13 +46,13 @@ public class CrudController<TEntity extends Identifiable<Long>, TRepository exte
 	}
 
 	@GetMapping("{id}")
-	public ResponseEntity<TEntity> read(@PathVariable Long id) {
+	public ResponseEntity<TEntity> read(@PathVariable TId id) {
 		var entity = repository.findById(id);
 		return ResponseEntity.of(entity);
 	}
 
 	@PutMapping("{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody TEntity updatedEntity) {
+	public ResponseEntity<?> update(@PathVariable TId id, @RequestBody TEntity updatedEntity) {
 		var entity = repository.findById(id).map(dbEntity -> {
 			BeanUtils.copyProperties(updatedEntity, dbEntity, updatedEntity.getIdName());
 			return dbEntity;
@@ -59,7 +64,8 @@ public class CrudController<TEntity extends Identifiable<Long>, TRepository exte
 	}
 
 	protected static ResponseEntity<?> ofNoContent(Optional<?> body) {
-		return body.map(x -> ResponseEntity.noContent().build()).orElseGet(() -> ResponseEntity.notFound().build());
+		return body.map(x -> ResponseEntity.noContent().build())
+				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
 }

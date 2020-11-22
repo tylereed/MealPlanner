@@ -8,7 +8,7 @@ import reed.tyler.mealplanner.CrudController;
 
 @RestController
 @RequestMapping("/api/ingredients")
-public class IngredientController extends CrudController<Ingredient, IngredientRepository> {
+public class IngredientController extends CrudController<Ingredient, IngredientRepository, Long> {
 
 	@Autowired
 	public IngredientController(IngredientRepository repository) {
