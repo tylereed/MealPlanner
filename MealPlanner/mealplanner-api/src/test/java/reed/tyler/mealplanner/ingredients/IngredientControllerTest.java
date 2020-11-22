@@ -51,7 +51,7 @@ class IngredientControllerTest {
 		return matchAll(jsonPath("$.id").value(id),
 				jsonPath("$.name").value(name),
 				jsonPath("$.exotic").value(exotic),
-				jsonPath("length($))").value(3));
+				jsonPath("length($)").value(3));
 	}
 
 	private ResultMatcher matchIngredient(Ingredient expected) {
@@ -92,9 +92,9 @@ class IngredientControllerTest {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String ingredientString = objectMapper.writeValueAsString(ingredient);
 
-		mvc.perform(post("/api/ingredient").contentType("application/json").content(ingredientString))
+		mvc.perform(post("/api/ingredients").contentType("application/json").content(ingredientString))
 			.andExpect(status().isCreated())
-			.andExpect(header().string("Location", endsWith("/api/recipes/3")));
+			.andExpect(header().string("Location", endsWith("/api/ingredients/3")));
 
 		ingredient.setId(3);
 		mvc.perform(get("/api/ingredients/3"))
@@ -109,11 +109,11 @@ class IngredientControllerTest {
 		ObjectMapper mapper = new ObjectMapper();
 		String ingredientString = mapper.writeValueAsString(ingredient);
 
-		mvc.perform(put("/api/recipes/1").contentType("application/json").content(ingredientString))
+		mvc.perform(put("/api/ingredients/1").contentType("application/json").content(ingredientString))
 				.andExpect(status().isNoContent());
 
 		ingredient.setId(1);
-		mvc.perform(get("/api/recipes/1"))
+		mvc.perform(get("/api/ingredients/1"))
 			.andExpect(status().isOk())
 			.andExpect(matchIngredient(ingredient));
 	}
