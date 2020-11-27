@@ -3,8 +3,11 @@ package reed.tyler.mealplanner;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import reed.tyler.mealplanner.utils.ErrorMessages;
 import reed.tyler.mealplanner.utils.Identifiable;
 
 public class CrudController<TEntity extends Identifiable<TId>, TRepository extends JpaRepository<TEntity, TId>, TId> {
@@ -27,7 +31,27 @@ public class CrudController<TEntity extends Identifiable<TId>, TRepository exten
 
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody @Validated TEntity entity) {
-		entity = repository.saveAndFlush(entity);
+		try {
+			entity = repository.saveAndFlush(entity);
+		} catch (DataIntegrityViolationException e) {
+			Pattern findUniqueContraint = Pattern.compile("constraint \\[\"PUBLIC\\.UK.*? ON PUBLIC.(.*?)\\((.*?)\\)");
+			Matcher matcher = findUniqueContraint.matcher(e.getMessage());
+			if (matcher.find()) {
+				String tableName = matcher.group(1);
+				String firstCharTable = tableName.substring(0, 1).toUpperCase();
+				tableName = firstCharTable + tableName.substring(1).toLowerCase();
+				String columnName = matcher.group(2).toLowerCase();
+
+				String an = firstCharTable.matches("[AEIOU]") ? "n" : "";
+
+				var errors = new ErrorMessages(String.format("A%s %s with the %s \"%s\" already exists", an, tableName,
+						columnName, entity.getName()));
+
+				return ResponseEntity.badRequest().body(errors);
+			}
+
+			throw e;
+		}
 
 		// Using fromMethod always threw errors, probably because the read method takes
 		// in a generic parameter, so just hard code the path

@@ -1,12 +1,11 @@
 package reed.tyler.mealplanner.recipes;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.ResultMatcher.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static reed.tyler.mealplanner.ResultMatcherExtension.*;
-
-import static reed.tyler.mealplanner.ingredients.IngredientControllerTest.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static reed.tyler.mealplanner.ResultMatcherExtension.matchBadRequest;
+import static reed.tyler.mealplanner.ingredients.IngredientControllerTest.matchIngredientArray;
 
 import java.util.Set;
 

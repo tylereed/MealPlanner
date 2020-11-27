@@ -17,7 +17,7 @@ public class ResultMatcherExtension {
 
 		for (int i = 0; i < errorMsg.length; i++) {
 			String msg = errorMsg[i];
-			matchers.add(jsonPath("$.messages[%i]", i).value(msg));
+			matchers.add(jsonPath("$.messages[%d]", i).value(msg));
 		}
 
 		return matchAll(matchers.toArray(ResultMatcher[]::new));
