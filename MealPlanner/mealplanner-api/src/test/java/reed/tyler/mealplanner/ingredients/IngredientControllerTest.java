@@ -27,7 +27,7 @@ import static reed.tyler.mealplanner.ResultMatcherExtension.matchBadRequest;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class IngredientControllerTest {
+public class IngredientControllerTest {
 
 	@Autowired
 	private IngredientRepository repository;
@@ -44,21 +44,21 @@ class IngredientControllerTest {
 		repository.flush();
 	}
 
-	private ResultMatcher matchIngredientArray(int index, long id, String name, boolean exotic) {
+	public static ResultMatcher matchIngredientArray(int index, long id, String name, boolean exotic) {
 		return matchAll(jsonPath("$[%d].id", index).value(id),
 				jsonPath("$[%d].name", index).value(name),
 				jsonPath("$[%d].exotic", index).value(exotic),
 				jsonPath("$[%d].length())", index).value(3));
 	}
 
-	private ResultMatcher matchIngredient(long id, String name, boolean exotic) {
+	public static ResultMatcher matchIngredient(long id, String name, boolean exotic) {
 		return matchAll(jsonPath("$.id").value(id),
 				jsonPath("$.name").value(name),
 				jsonPath("$.exotic").value(exotic),
 				jsonPath("length($)").value(3));
 	}
 	
-	private String createIngredientJson(long id, String name, boolean exotic) throws JsonProcessingException {
+	public static String createIngredientJson(long id, String name, boolean exotic) throws JsonProcessingException {
 		Ingredient ingredient = new Ingredient(id, name, exotic);
 
 		ObjectMapper objectMapper = new ObjectMapper();
