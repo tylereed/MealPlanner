@@ -63,7 +63,7 @@ public class ToIngredientControllerTest {
 
 	@AfterEach
 	void tearDown(@Autowired JdbcUtils jdbc) throws Exception {
-		jdbc.truncateTables("ingredient", "recipe");
+		jdbc.truncateTables("recipe_ingredients", "ingredient", "recipe");
 	}
 
 	@Test

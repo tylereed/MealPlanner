@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,23 +18,25 @@ import reed.tyler.mealplanner.ingredients.IngredientRepository;
 @RequestMapping("/api/recipes/{recipeId}/ingredients")
 public class ToIngredientController {
 
-	private RecipeRepository recipes;
-	private IngredientRepository ingredients;
+	private RecipeRepository recipesRepo;
+	private IngredientRepository ingredientsRepo;
 
 	@Autowired
 	public ToIngredientController(RecipeRepository recipes, IngredientRepository ingredients) {
-		this.recipes = recipes;
-		this.ingredients = ingredients;
+		this.recipesRepo = recipes;
+		this.ingredientsRepo = ingredients;
 	}
 
 	@PostMapping
-	public ResponseEntity<?> set(List<String> ingredientNames) {
+	public ResponseEntity<?> set(@RequestBody List<String> ingredientNames) {
 		return ResponseEntity.status(500).build();
 	}
 
 	@GetMapping
-	public List<Ingredient> read(@PathVariable long recipeId) {
-		return List.of();
+	public ResponseEntity<List<Ingredient>> read(@PathVariable long recipeId) {
+		var recipe = recipesRepo.findById(recipeId);
+		var ingredients = recipe.map(r -> List.copyOf(r.getIngredients()));
+		return ResponseEntity.of(ingredients);
 	}
 
 }
