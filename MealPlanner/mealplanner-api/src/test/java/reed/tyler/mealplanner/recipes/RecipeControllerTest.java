@@ -15,11 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import reed.tyler.mealplanner.JdbcUtils;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,8 +42,8 @@ class RecipeControllerTest {
 	}
 
 	@AfterEach
-	void tearDown(@Autowired JdbcTemplate jdbcTemplate) throws Exception {
-		jdbcTemplate.execute("TRUNCATE TABLE recipe RESTART IDENTITY");
+	void tearDown(@Autowired JdbcUtils jdbc) throws Exception {
+		jdbc.truncateTables("recipe");
 	}
 
 	private ResultMatcher matchRecipeArray(int index, long id, String name, String directions, String location, int price,
