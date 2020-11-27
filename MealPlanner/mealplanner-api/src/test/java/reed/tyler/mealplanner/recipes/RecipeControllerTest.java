@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static reed.tyler.mealplanner.ResultMatcherExtension.matchBadRequest;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reed.tyler.mealplanner.JdbcUtils;
@@ -46,7 +48,7 @@ class RecipeControllerTest {
 		jdbc.truncateTables("recipe");
 	}
 
-	private ResultMatcher matchRecipeArray(int index, long id, String name, String directions, String location, int price,
+	private static ResultMatcher matchRecipeArray(int index, long id, String name, String directions, String location, int price,
 			int speed, int difficulty) {
 
 		return matchAll(jsonPath("$[%d].id", index).value(id),
@@ -59,7 +61,7 @@ class RecipeControllerTest {
 				jsonPath("$[%d].length())", index).value(7));
 	}
 
-	private ResultMatcher matchRecipe(long id, String name, String directions, String location, int price, int speed,
+	private static ResultMatcher matchRecipe(long id, String name, String directions, String location, int price, int speed,
 			int difficulty) {
 
 		return matchAll(jsonPath("$.id").value(id),
@@ -71,10 +73,13 @@ class RecipeControllerTest {
 				jsonPath("$.difficulty").value(difficulty),
 				jsonPath("length($)").value(7));
 	}
-	
-	private ResultMatcher matchRecipe(Recipe expected) {
-		return matchRecipe(expected.getEntityId(), expected.getName(), expected.getDirections(), expected.getLocation(),
-				expected.getPrice(), expected.getSpeed(), expected.getDifficulty());
+
+	private static String createRecipeJson(long id, String name, String directions, String location, int price,
+			int speed, int difficulty) throws JsonProcessingException {
+		Recipe recipe = new Recipe(id, name, directions, location, price, speed, difficulty);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		return objectMapper.writeValueAsString(recipe);
 	}
 
 	@Test
@@ -100,35 +105,36 @@ class RecipeControllerTest {
 
 	@Test
 	void testCreate() throws Exception {
-		Recipe recipe = new Recipe(0, "unit test name", "unit test directions", "unit test location", 3, 2, 1);
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		String recipeString = objectMapper.writeValueAsString(recipe);
+		String recipeString = createRecipeJson(0, "unit test name", "unit test directions", "unit test location", 3, 2,
+				1);
 
 		mvc.perform(post("/api/recipes").contentType("application/json").content(recipeString))
 			.andExpect(status().isCreated())
 			.andExpect(header().string("Location", endsWith("/api/recipes/3")));
 
-		recipe.setId(3);
 		mvc.perform(get("/api/recipes/3"))
-			.andExpect(status().isOk())
-			.andExpect(matchRecipe(recipe));
+				.andExpect(status().isOk())
+				.andExpect(matchRecipe(3, "unit test name", "unit test directions", "unit test location", 3, 2, 1));
+	}
+
+	@Test
+	void testCreate_BadRequest_DuplicateName() throws Exception {
+		String recipeString = createRecipeJson(0, "test name1", "unit test directions", "unit test location", 1, 2, 3);
+
+		mvc.perform(post("/api/recipes").contentType("application/json").content(recipeString))
+				.andExpect(matchBadRequest("A Recipe with the name \"test name1\" already exists"));
 	}
 
 	@Test
 	void testUpdate() throws Exception {
-		Recipe recipe = new Recipe(0, "updated name", "updated directions", "updated location", 3, 1, 2);
-
-		ObjectMapper mapper = new ObjectMapper();
-		String recipeString = mapper.writeValueAsString(recipe);
+		String recipeString = createRecipeJson(0, "updated name", "updated directions", "updated location", 3, 1, 2);
 
 		mvc.perform(put("/api/recipes/1").contentType("application/json").content(recipeString))
 				.andExpect(status().isNoContent());
 
-		recipe.setId(1);
 		mvc.perform(get("/api/recipes/1"))
 			.andExpect(status().isOk())
-			.andExpect(matchRecipe(recipe));
+			.andExpect(matchRecipe(1, "updated name", "updated directions", "updated location", 3, 1, 2));
 	}
 
 }

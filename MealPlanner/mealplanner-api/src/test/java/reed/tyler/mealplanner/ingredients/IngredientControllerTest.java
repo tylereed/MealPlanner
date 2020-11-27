@@ -18,9 +18,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reed.tyler.mealplanner.JdbcUtils;
+
+import static reed.tyler.mealplanner.ResultMatcherExtension.matchBadRequest;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -54,9 +57,12 @@ class IngredientControllerTest {
 				jsonPath("$.exotic").value(exotic),
 				jsonPath("length($)").value(3));
 	}
+	
+	private String createIngredientJson(long id, String name, boolean exotic) throws JsonProcessingException {
+		Ingredient ingredient = new Ingredient(id, name, exotic);
 
-	private ResultMatcher matchIngredient(Ingredient expected) {
-		return matchIngredient(expected.getEntityId(), expected.getName(), expected.isExotic());
+		ObjectMapper objectMapper = new ObjectMapper();
+		return objectMapper.writeValueAsString(ingredient);
 	}
 
 	@AfterEach
@@ -88,35 +94,35 @@ class IngredientControllerTest {
 
 	@Test
 	void testCreate() throws Exception {
-		Ingredient ingredient = new Ingredient(0, "new ingredient", false);
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		String ingredientString = objectMapper.writeValueAsString(ingredient);
+		String ingredientString = createIngredientJson(0, "new ingredient", false);
 
 		mvc.perform(post("/api/ingredients").contentType("application/json").content(ingredientString))
 			.andExpect(status().isCreated())
 			.andExpect(header().string("Location", endsWith("/api/ingredients/3")));
 
-		ingredient.setId(3L);
 		mvc.perform(get("/api/ingredients/3"))
 			.andExpect(status().isOk())
-			.andExpect(matchIngredient(ingredient));
+			.andExpect(matchIngredient(3, "new ingredient", false));
+	}
+
+	@Test
+	void testCreate_BadRequest_DuplicateName() throws Exception {
+		String ingredientString = createIngredientJson(0, "test name1", false);
+
+		mvc.perform(post("/api/ingredients").contentType("application/json").content(ingredientString))
+			.andExpect(matchBadRequest("An Ingredient with the name \"test name1\" already exists"));
 	}
 
 	@Test
 	void testUpdate() throws Exception {
-		Ingredient ingredient = new Ingredient(0, "new ingredient", false);
-
-		ObjectMapper mapper = new ObjectMapper();
-		String ingredientString = mapper.writeValueAsString(ingredient);
+		String ingredientString = createIngredientJson(0, "new ingredient", false);
 
 		mvc.perform(put("/api/ingredients/1").contentType("application/json").content(ingredientString))
 				.andExpect(status().isNoContent());
 
-		ingredient.setId(1L);
 		mvc.perform(get("/api/ingredients/1"))
 			.andExpect(status().isOk())
-			.andExpect(matchIngredient(ingredient));
+			.andExpect(matchIngredient(1, "new ingredient", false));
 	}
 
 }

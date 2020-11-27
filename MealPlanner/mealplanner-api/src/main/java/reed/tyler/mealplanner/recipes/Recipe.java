@@ -33,7 +33,7 @@ public class Recipe implements Identifiable<Long> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@Column(length = 50, nullable = false)
+	@Column(length = 50, nullable = false, unique = true)
 	@NonNull
 	private String name;
 
