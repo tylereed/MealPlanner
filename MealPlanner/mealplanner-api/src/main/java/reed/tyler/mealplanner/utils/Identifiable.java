@@ -12,4 +12,6 @@ public interface Identifiable<T> {
 		return "id";
 	}
 
+	String getName();
+
 }
